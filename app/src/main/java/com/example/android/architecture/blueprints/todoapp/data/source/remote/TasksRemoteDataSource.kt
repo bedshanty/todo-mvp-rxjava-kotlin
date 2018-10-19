@@ -19,7 +19,6 @@ import android.os.Handler
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.google.common.base.Optional
-import com.google.common.collect.Lists
 import io.reactivex.Flowable
 import java.util.concurrent.TimeUnit
 
@@ -98,9 +97,9 @@ object TasksRemoteDataSource : TasksDataSource {
 
     override fun clearCompletedTasks() {
         val iterator = TASKS_SERVICE_DATA.entries.iterator()
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             iterator.next().let {
-                if(it.value.completed) {
+                if (it.value.completed) {
                     iterator.remove()
                 }
             }

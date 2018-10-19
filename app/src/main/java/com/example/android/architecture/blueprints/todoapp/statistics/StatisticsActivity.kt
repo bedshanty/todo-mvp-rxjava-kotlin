@@ -59,7 +59,7 @@ class StatisticsActivity : AppCompatActivity() {
                 .findFragmentById(R.id.contentFrame) as StatisticsFragment?
                 ?: StatisticsFragment.newInstance().also {
                     ActivityUtils.addFragmentToActivity(supportFragmentManager, it, R.id.contentFrame)
-        }
+                }
 
         StatisticsPresenter(
                 Injection.provideTasksRepository(applicationContext),

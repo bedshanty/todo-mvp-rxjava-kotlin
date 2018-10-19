@@ -17,7 +17,6 @@ package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import com.example.android.architecture.blueprints.todoapp.Injection
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.util.ActivityUtils
@@ -32,9 +31,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
         setContentView(R.layout.taskdetail_act)
 
-        findViewById<Toolbar>(R.id.toolbar).let {
-            setSupportActionBar(it)
-        }
+        setSupportActionBar(findViewById(R.id.toolbar))
 
         supportActionBar!!.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -47,7 +44,7 @@ class TaskDetailActivity : AppCompatActivity() {
         var taskDetailFragment: TaskDetailFragment? = supportFragmentManager
                 .findFragmentById(R.id.contentFrame) as? TaskDetailFragment
 
-        if(taskDetailFragment == null) {
+        if (taskDetailFragment == null) {
             taskDetailFragment = TaskDetailFragment.newInstance(taskId)
 
             ActivityUtils.addFragmentToActivity(supportFragmentManager, taskDetailFragment, R.id.contentFrame)

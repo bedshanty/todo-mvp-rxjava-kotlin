@@ -15,7 +15,7 @@ class SchedulerProvider : BaseSchedulerProvider {
 
             synchronized(this) {
 
-                if(isNeededToMakeInstance) {
+                if (isNeededToMakeInstance) {
                     INSTANCE = SchedulerProvider()
                     isNeededToMakeInstance = false
                 }
@@ -25,9 +25,15 @@ class SchedulerProvider : BaseSchedulerProvider {
         }
     }
 
-    override fun computation(): Scheduler { return Schedulers.computation() }
+    override fun computation(): Scheduler {
+        return Schedulers.computation()
+    }
 
-    override fun io(): Scheduler { return Schedulers.io() }
+    override fun io(): Scheduler {
+        return Schedulers.io()
+    }
 
-    override fun ui(): Scheduler { return AndroidSchedulers.mainThread() }
+    override fun ui(): Scheduler {
+        return AndroidSchedulers.mainThread()
+    }
 }

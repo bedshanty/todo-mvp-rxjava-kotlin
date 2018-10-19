@@ -37,7 +37,7 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
         get() = isAdded
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.statistics_frag, container, false)
         statisticsTV = root.findViewById(R.id.statistics)
         return root

@@ -16,9 +16,7 @@
 package com.example.android.architecture.blueprints.todoapp.statistics
 
 
-import android.util.Log
 import android.util.Pair
-import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import com.example.android.architecture.blueprints.todoapp.util.schedulers.BaseSchedulerProvider
@@ -57,7 +55,7 @@ class StatisticsPresenter(
         EspressoIdlingResource.increment() // App is busy until further notice
 
         var i = 0
-        val a: MutableList<String?> = MutableList(1000) {""}
+        val a: MutableList<String?> = MutableList(1000) { "" }
         tasksRepository.getTasks().map {
             it.map {
                 a.add(i, it.title)
@@ -71,18 +69,19 @@ class StatisticsPresenter(
         val completedTasks = tasks.filter { it.completed }.count().toFlowable()
         val activeTasks = tasks.filter { it.active }.count().toFlowable()
         val disposable = Flowable
-                .zip(completedTasks, activeTasks, BiFunction<Long, Long, Pair<Long, Long>> {
-                    completed, active -> Pair.create(active, completed) })
+                .zip(completedTasks, activeTasks, BiFunction<Long, Long, Pair<Long, Long>> { completed, active -> Pair.create(active, completed) })
                 .subscribeOn(schedulerProvider.computation())
                 .observeOn(schedulerProvider.ui())
                 .doFinally {
-                    if(!EspressoIdlingResource.countingIdlingResource.isIdleNow) {
+                    if (!EspressoIdlingResource.countingIdlingResource.isIdleNow) {
                         EspressoIdlingResource.decrement()
                     }
                 }
-                .subscribe (
-                        { statisticsView.showStatistics(Ints.saturatedCast(it.first),
-                                Ints.saturatedCast(it.second)) },
+                .subscribe(
+                        {
+                            statisticsView.showStatistics(Ints.saturatedCast(it.first),
+                                    Ints.saturatedCast(it.second))
+                        },
                         { statisticsView.showLoadingStatisticsError() },
                         { statisticsView.setProgressIndicator(false) })
         compositeDisposable.add(disposable)

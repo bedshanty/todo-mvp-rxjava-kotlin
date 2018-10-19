@@ -8,11 +8,11 @@ class TasksPersistenceContract private constructor() {
 
         companion object {
 
-            const val TABLE_NAME : String = "tasks"
-            const val COLUMN_NAME_ENTRY_ID : String = "entryid"
-            const val COLUMN_NAME_TITLE : String = "title"
-            const val COLUMN_NAME_DESCRIPTION : String = "description"
-            const val COLUMN_NAME_COMPLETED : String = "completed"
+            const val TABLE_NAME: String = "tasks"
+            const val COLUMN_NAME_ENTRY_ID: String = "entryid"
+            const val COLUMN_NAME_TITLE: String = "title"
+            const val COLUMN_NAME_DESCRIPTION: String = "description"
+            const val COLUMN_NAME_COMPLETED: String = "completed"
         }
     }
 }

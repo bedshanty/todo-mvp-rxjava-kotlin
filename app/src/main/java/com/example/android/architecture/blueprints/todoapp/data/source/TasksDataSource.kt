@@ -31,9 +31,9 @@ import io.reactivex.Flowable
  */
 interface TasksDataSource {
 
-    fun getTasks() : Flowable<List<Task>>
+    fun getTasks(): Flowable<List<Task>>
 
-    fun getTask(taskId: String) : Flowable<Optional<Task?>>
+    fun getTask(taskId: String): Flowable<Optional<Task?>>
 
     fun saveTask(task: Task)
 

@@ -28,11 +28,12 @@ import java.util.concurrent.atomic.AtomicInteger
  * This class can then be used to wrap up operations that while in progress should block tests from
  * accessing the UI.
  */
-class SimpleCountingIdlingResource(val resourceName: String) : IdlingResource {
+class SimpleCountingIdlingResource(private val resourceName: String) : IdlingResource {
 
     private val counter = AtomicInteger(0)
     // written from main thread, read from any thread.
-    @Volatile private var resourceCallback: IdlingResource.ResourceCallback? = null
+    @Volatile
+    private var resourceCallback: IdlingResource.ResourceCallback? = null
 
     override fun getName() = resourceName
 

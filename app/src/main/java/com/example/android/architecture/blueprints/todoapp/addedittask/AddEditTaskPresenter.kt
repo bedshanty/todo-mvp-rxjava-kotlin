@@ -34,16 +34,16 @@ import io.reactivex.disposables.CompositeDisposable
  */
 class AddEditTaskPresenter(
         private val taskId: String?,
-        val tasksRepository: TasksDataSource,
-        val addTaskView: AddEditTaskContract.View,
+        private val tasksRepository: TasksDataSource,
+        private val addTaskView: AddEditTaskContract.View,
         override var isDataMissing: Boolean,
-        val schedulerProvider: BaseSchedulerProvider
+        private val schedulerProvider: BaseSchedulerProvider
 ) : AddEditTaskContract.Presenter {
 
     private val isNewTask: Boolean
-    get() {
-        return taskId == null
-    }
+        get() {
+            return taskId == null
+        }
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -70,18 +70,18 @@ class AddEditTaskPresenter(
     }
 
     override fun populateTask() {
-        if(isNewTask) {
+        if (isNewTask) {
             throw java.lang.RuntimeException("populateTask() was called but task is new")
         }
 
-        if(taskId != null) {
+        if (taskId != null) {
 
             compositeDisposable.add(tasksRepository
                     .getTask(taskId)
                     .subscribeOn(schedulerProvider.computation())
                     .observeOn(schedulerProvider.ui())
                     .subscribe(
-                            {
+                            { it ->
                                 if (it.isPresent) {
                                     it.get().let {
                                         if (addTaskView.isActive) {

@@ -8,17 +8,17 @@ class TasksDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
 
     companion object {
 
-        const val DATABASE_VERSION : Int = 1
+        const val DATABASE_VERSION: Int = 1
 
-        const val DATABASE_NAME : String = "Tasks.db"
+        const val DATABASE_NAME: String = "Tasks.db"
 
-        private const val TEXT_TYPE : String = " TEXT"
+        private const val TEXT_TYPE: String = " TEXT"
 
-        private const val BOOLEAN_TYPE : String = " INTEGER"
+        private const val BOOLEAN_TYPE: String = " INTEGER"
 
-        private const val COMMA_SEP : String = ","
+        private const val COMMA_SEP: String = ","
 
-        private const val SQL_CREATE_ENTRIES : String =
+        private const val SQL_CREATE_ENTRIES: String =
                 "CREATE TABLE " + TasksPersistenceContract.TaskEntry.TABLE_NAME + " (" +
                         TasksPersistenceContract.TaskEntry.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + " PRIMARY KEY," +
                         TasksPersistenceContract.TaskEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +

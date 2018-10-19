@@ -16,7 +16,6 @@
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.util.schedulers.BaseSchedulerProvider
 import com.google.common.base.Strings
@@ -48,7 +47,7 @@ class TaskDetailPresenter(
     }
 
     private fun openTask() {
-        if(Strings.isNullOrEmpty(taskId)) {
+        if (Strings.isNullOrEmpty(taskId)) {
             taskDetailView.showMissingTask()
             return
         }
@@ -61,9 +60,9 @@ class TaskDetailPresenter(
                 .subscribeOn(schedulerProvider.computation())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(
-                        { if(it != null) showTask(it) },
+                        { if (it != null) showTask(it) },
                         { },
-                        { taskDetailView.setLoadingIndicator(false)} ))
+                        { taskDetailView.setLoadingIndicator(false) }))
     }
 
     override fun editTask() {
@@ -104,7 +103,7 @@ class TaskDetailPresenter(
     private fun showTask(task: Task) {
         with(taskDetailView) {
             task.title.let {
-                if(Strings.isNullOrEmpty(it)) {
+                if (Strings.isNullOrEmpty(it)) {
                     hideTitle()
                 } else {
                     showTitle(it)
@@ -112,7 +111,7 @@ class TaskDetailPresenter(
             }
 
             task.description.let {
-                if(Strings.isNullOrEmpty(it)) {
+                if (Strings.isNullOrEmpty(it)) {
                     hideDescription()
                 } else {
                     showDescription(it)

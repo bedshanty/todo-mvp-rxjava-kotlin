@@ -20,7 +20,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.support.annotation.VisibleForTesting
 import android.text.TextUtils
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
@@ -49,7 +48,7 @@ class TasksLocalDataSource private constructor(
 
         fun getInstance(context: Context, schedulerProvider: BaseSchedulerProvider): TasksLocalDataSource {
 
-            if(isNeededToMakeInstance) {
+            if (isNeededToMakeInstance) {
                 INSTANCE = TasksLocalDataSource(context, schedulerProvider)
                 isNeededToMakeInstance = false
             }
@@ -122,7 +121,9 @@ class TasksLocalDataSource private constructor(
                 values, SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    override fun completeTask(task: Task) { completeTask(task.id) }
+    override fun completeTask(task: Task) {
+        completeTask(task.id)
+    }
 
     override fun completeTask(taskId: String) {
         val values = ContentValues()
@@ -133,7 +134,9 @@ class TasksLocalDataSource private constructor(
         mDatabaseHelper.update(TasksPersistenceContract.TaskEntry.TABLE_NAME, values, selection, *selectionArgs)
     }
 
-    override fun activateTask(task: Task) { activateTask(task.id) }
+    override fun activateTask(task: Task) {
+        activateTask(task.id)
+    }
 
     override fun activateTask(taskId: String) {
         val values = ContentValues()

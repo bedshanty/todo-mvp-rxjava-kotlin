@@ -19,8 +19,7 @@ import android.support.annotation.VisibleForTesting
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.google.common.base.Optional
 import io.reactivex.Flowable
-import java.util.ArrayList
-import java.util.LinkedHashMap
+import java.util.*
 
 /**
  * Concrete implementation to load tasks from the data sources into a cache.
@@ -41,8 +40,8 @@ class TasksRepository(
         private lateinit var INSTANCE: TasksRepository
 
         fun getInstance(tasksRemoteDataSource: TasksDataSource,
-                        tasksLocalDataSource: TasksDataSource) : TasksRepository {
-            if(isNeededToMakeInstance) {
+                        tasksLocalDataSource: TasksDataSource): TasksRepository {
+            if (isNeededToMakeInstance) {
                 INSTANCE = TasksRepository(tasksRemoteDataSource, tasksLocalDataSource)
                 isNeededToMakeInstance = false
             }
@@ -61,15 +60,15 @@ class TasksRepository(
     private var mCacheIsDirty = false
 
     override fun getTasks(): Flowable<List<Task>> {
-        if(mCachedTask != null && !mCacheIsDirty) {
+        if (mCachedTask != null && !mCacheIsDirty) {
             return Flowable.fromIterable(mCachedTask!!.values).toList().toFlowable()
-        } else if(mCachedTask == null) {
+        } else if (mCachedTask == null) {
             mCachedTask = LinkedHashMap()
         }
 
         val remoteTasks = getAndSaveRemoteTasks()
 
-        return if(mCacheIsDirty) {
+        return if (mCacheIsDirty) {
             remoteTasks
         } else {
             val localTasks = getAndCacheLocalTasks()
@@ -100,21 +99,21 @@ class TasksRepository(
     override fun getTask(taskId: String): Flowable<Optional<Task?>> {
         val cachedTask = getTaskWithId(taskId)
 
-        if(cachedTask != null) {
+        if (cachedTask != null) {
             return Flowable.just(Optional.of(cachedTask))
         }
 
-        if(mCachedTask == null) {
+        if (mCachedTask == null) {
             mCachedTask = LinkedHashMap()
         }
 
         val localTask = getTaskWithIdFromLocalRepository(taskId)
         val remoteTask = mTasksRemoteDataSource
                 .getTask(taskId)
-                .doOnNext {
-                    if(it.isPresent) {
+                .doOnNext { it ->
+                    if (it.isPresent) {
                         it.get().let {
-                            if(it != null) {
+                            if (it != null) {
                                 mTasksLocalDataSource.saveTask(it)
                                 mCachedTask!![it.id] = it
                             }
@@ -128,20 +127,20 @@ class TasksRepository(
     }
 
     private fun getTaskWithId(id: String?): Task? {
-        return if(mCachedTask == null || mCachedTask!!.isEmpty()) {
+        return if (mCachedTask == null || mCachedTask!!.isEmpty()) {
             null
         } else {
             mCachedTask!![id]
         }
     }
 
-    internal fun getTaskWithIdFromLocalRepository(taskId: String) =
+    private fun getTaskWithIdFromLocalRepository(taskId: String) =
             mTasksLocalDataSource
                     .getTask(taskId)
-                    .doOnNext {
-                        if(it.isPresent) {
+                    .doOnNext { it ->
+                        if (it.isPresent) {
                             it.get().let {
-                                if(it != null) {
+                                if (it != null) {
                                     mCachedTask!![taskId] = it
                                 }
                             }
@@ -154,7 +153,7 @@ class TasksRepository(
         mTasksRemoteDataSource.saveTask(task)
         mTasksLocalDataSource.saveTask(task)
 
-        if(mCachedTask == null) {
+        if (mCachedTask == null) {
             mCachedTask = LinkedHashMap()
         }
 
@@ -167,7 +166,7 @@ class TasksRepository(
 
         val completedTask = Task(task.title, task.description, task.id, true)
 
-        if(mCachedTask == null) {
+        if (mCachedTask == null) {
             mCachedTask = LinkedHashMap()
         }
 
@@ -176,7 +175,7 @@ class TasksRepository(
 
     override fun completeTask(taskId: String) {
         getTaskWithId(taskId).let {
-            if(it != null) {
+            if (it != null) {
                 completeTask(it)
             }
         }
@@ -188,7 +187,7 @@ class TasksRepository(
 
         val activateTask = Task(task.title, task.description, task.id)
 
-        if(mCachedTask == null) {
+        if (mCachedTask == null) {
             mCachedTask = LinkedHashMap()
         }
 
@@ -197,7 +196,7 @@ class TasksRepository(
 
     override fun activateTask(taskId: String) {
         getTaskWithId(taskId).let {
-            if(it != null) {
+            if (it != null) {
                 activateTask(it)
             }
         }
@@ -207,14 +206,14 @@ class TasksRepository(
         mTasksRemoteDataSource.clearCompletedTasks()
         mTasksLocalDataSource.clearCompletedTasks()
 
-        if(mCachedTask != null) {
+        if (mCachedTask != null) {
             mCachedTask = LinkedHashMap()
         }
 
         mCachedTask!!.entries.iterator().let {
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 val entry = it.next()
-                if(entry.value.completed) {
+                if (entry.value.completed) {
                     it.remove()
                 }
             }
@@ -229,7 +228,7 @@ class TasksRepository(
         mTasksRemoteDataSource.deleteAllTasks()
         mTasksLocalDataSource.deleteAllTasks()
 
-        if(mCachedTask == null) {
+        if (mCachedTask == null) {
             mCachedTask = LinkedHashMap()
         }
 

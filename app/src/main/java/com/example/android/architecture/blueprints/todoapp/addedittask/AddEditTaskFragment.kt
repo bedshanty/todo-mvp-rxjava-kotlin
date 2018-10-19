@@ -56,7 +56,7 @@ class AddEditTaskFragment : Fragment(), AddEditTaskContract.View {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.addtask_frag, container, false)
         with(root) {
             title = findViewById(R.id.add_task_title)

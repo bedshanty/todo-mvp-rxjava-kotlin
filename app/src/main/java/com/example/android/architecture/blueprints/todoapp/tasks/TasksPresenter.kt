@@ -24,7 +24,6 @@ import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingRe
 import com.example.android.architecture.blueprints.todoapp.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
-import java.util.ArrayList
 
 /**
  * Listens to user actions from the UI ([TasksFragment]), retrieves the data and updates the
@@ -90,7 +89,7 @@ class TasksPresenter(
                 .getTasks()
                 .flatMap { Flowable.fromIterable(it) }
                 .filter {
-                    when(currentFiltering) {
+                    when (currentFiltering) {
                         TasksFilterType.ACTIVE_TASKS -> it.active
                         TasksFilterType.COMPLETED_TASKS -> it.completed
                         TasksFilterType.ALL_TASKS -> true
@@ -100,7 +99,7 @@ class TasksPresenter(
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .doFinally {
-                    if(!EspressoIdlingResource.countingIdlingResource.isIdleNow) {
+                    if (!EspressoIdlingResource.countingIdlingResource.isIdleNow) {
                         EspressoIdlingResource.decrement()
                     }
                 }

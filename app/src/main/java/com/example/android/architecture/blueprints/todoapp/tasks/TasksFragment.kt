@@ -23,23 +23,13 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.PopupMenu
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ListView
-import android.widget.TextView
+import android.view.*
+import android.widget.*
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskActivity
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailActivity
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Display a grid of [Task]s. User can choose to view all, active or completed tasks.
@@ -61,7 +51,7 @@ class TasksFragment : Fragment(), TasksContract.View {
     /**
      * Listener for clicks on tasks in the ListView.
      */
-    internal var itemListener: TaskItemListener = object : TaskItemListener {
+    private var itemListener: TaskItemListener = object : TaskItemListener {
         override fun onTaskClick(clickedTask: Task) {
             presenter.openTaskDetails(clickedTask)
         }
@@ -87,7 +77,7 @@ class TasksFragment : Fragment(), TasksContract.View {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.tasks_frag, container, false)
 
         // Set up tasks view
@@ -113,17 +103,17 @@ class TasksFragment : Fragment(), TasksContract.View {
             noTasksView = findViewById(R.id.noTasks)
             noTaskIcon = findViewById(R.id.noTasksIcon)
             noTaskMainView = findViewById(R.id.noTasksMain)
-            noTaskAddView = (findViewById<TextView>(R.id.noTasksAdd)).also {
+            noTaskAddView = (findViewById<TextView>(R.id.noTasksAdd)).also { it ->
                 it.setOnClickListener { showAddTask() }
             }
         }
 
         // Set up floating action button
-        val fab = getActivity()!!.findViewById<FloatingActionButton>(R.id.fab_add_task)
+        val fab = activity!!.findViewById<FloatingActionButton>(R.id.fab_add_task)
 
         fab.apply {
             setImageResource(R.drawable.ic_add)
-            setOnClickListener{ presenter.addNewTask() }
+            setOnClickListener { presenter.addNewTask() }
         }
 
         setHasOptionsMenu(true)

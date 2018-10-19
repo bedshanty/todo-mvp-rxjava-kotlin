@@ -51,8 +51,8 @@ class AddEditTaskActivity : AppCompatActivity() {
                         }
 
         val shouldLoadDataFromRepo =
-                // Prevent the presenter from loading data from the repository if this is a config change.
-                // Data might not have loaded when the config change happen, so we saved the state.
+        // Prevent the presenter from loading data from the repository if this is a config change.
+        // Data might not have loaded when the config change happen, so we saved the state.
                 savedInstanceState?.getBoolean(SHOULD_LOAD_DATA_FROM_REPO_KEY) ?: true
 
 

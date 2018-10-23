@@ -34,7 +34,6 @@ import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTa
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailActivity
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
-import java.util.*
 
 /**
  * Display a grid of [Task]s. User can choose to view all, active or completed tasks.
@@ -56,7 +55,7 @@ class TasksFragment : Fragment(), TasksContract.View {
     /**
      * Listener for clicks on tasks in the ListView.
      */
-    private var itemListener: TaskItemListener = object : TaskItemListener {
+    private val itemListener: TasksAdapterDelegate.TaskItemListener = object : TasksAdapterDelegate.TaskItemListener {
         override fun onTaskClick(clickedTask: Task) {
             presenter.openTaskDetails(clickedTask)
         }
@@ -70,7 +69,7 @@ class TasksFragment : Fragment(), TasksContract.View {
         }
     }
 
-    private val listAdapter by lazy { TasksAdapter(ArrayList(0), itemListener) }
+    private val listAdapter by lazy { TasksAdapter(itemListener) }
 
     override fun onResume() {
         super.onResume()
@@ -81,15 +80,12 @@ class TasksFragment : Fragment(), TasksContract.View {
         presenter.result(requestCode, resultCode)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.tasks_frag, container, false)
-
         // Set up tasks view
         with(root) {
             val recyclerView = findViewById<RecyclerView>(R.id.tasks_list).apply {
                 adapter = listAdapter
-                layoutManager = LinearLayoutManager(activity)
             }
 
             // Set up progress indicator
@@ -171,7 +167,6 @@ class TasksFragment : Fragment(), TasksContract.View {
     override fun showTasks(tasks: List<Task>) {
 
         listAdapter.tasks = tasks
-        listAdapter.notifyDataSetChanged()
         tasksView.visibility = View.VISIBLE
         noTasksView.visibility = View.GONE
     }
@@ -247,10 +242,8 @@ class TasksFragment : Fragment(), TasksContract.View {
         Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
     }
 
-    private inner class TasksAdapter(tasks: List<Task>, itemListener: TaskItemListener)
-        : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-        var tasks: List<Task> = tasks
+    private inner class TasksAdapter(itemListener: TasksAdapterDelegate.TaskItemListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        var tasks: List<Task> = emptyList()
             set(tasks) {
                 field = tasks
                 notifyDataSetChanged()
@@ -259,8 +252,7 @@ class TasksFragment : Fragment(), TasksContract.View {
         val delegates = AdapterDelegatesManager<List<Task>>()
 
         init {
-
-            delegates.addDelegate(TasksAdapterDelegate(activity!!, ArrayList(0), itemListener))
+            delegates.addDelegate(TasksAdapterDelegate(itemListener))
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = delegates.onCreateViewHolder(parent, viewType)
@@ -268,15 +260,6 @@ class TasksFragment : Fragment(), TasksContract.View {
         override fun getItemCount(): Int = tasks.size
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = delegates.onBindViewHolder(tasks, position, holder)
-    }
-
-    interface TaskItemListener {
-
-        fun onTaskClick(clickedTask: Task)
-
-        fun onCompleteTaskClick(completedTask: Task)
-
-        fun onActivateTaskClick(activatedTask: Task)
     }
 
     companion object {

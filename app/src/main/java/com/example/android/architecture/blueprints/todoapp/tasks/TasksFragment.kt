@@ -22,13 +22,18 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
+import android.support.v7.widget.RecyclerView
 import android.view.*
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskActivity
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailActivity
+import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import java.util.*
 
 /**
@@ -65,7 +70,7 @@ class TasksFragment : Fragment(), TasksContract.View {
         }
     }
 
-    private val listAdapter = TasksAdapter(ArrayList(0), itemListener)
+    private val listAdapter by lazy { TasksAdapter(ArrayList(0), itemListener) }
 
     override fun onResume() {
         super.onResume()
@@ -82,7 +87,10 @@ class TasksFragment : Fragment(), TasksContract.View {
 
         // Set up tasks view
         with(root) {
-            val listView = findViewById<ListView>(R.id.tasks_list).apply { adapter = listAdapter }
+            val recyclerView = findViewById<RecyclerView>(R.id.tasks_list).apply {
+                adapter = listAdapter
+                layoutManager = LinearLayoutManager(activity)
+            }
 
             // Set up progress indicator
             findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout).apply {
@@ -92,7 +100,7 @@ class TasksFragment : Fragment(), TasksContract.View {
                         ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
                 )
                 // Set the scrolling view in the custom SwipeRefreshLayout.
-                scrollUpChild = listView
+                scrollUpChild = recyclerView
                 setOnRefreshListener { presenter.loadTasks(false) }
             }
 
@@ -161,7 +169,9 @@ class TasksFragment : Fragment(), TasksContract.View {
     }
 
     override fun showTasks(tasks: List<Task>) {
+
         listAdapter.tasks = tasks
+        listAdapter.notifyDataSetChanged()
         tasksView.visibility = View.VISIBLE
         noTasksView.visibility = View.GONE
     }
@@ -237,8 +247,8 @@ class TasksFragment : Fragment(), TasksContract.View {
         Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
     }
 
-    private class TasksAdapter(tasks: List<Task>, private val itemListener: TaskItemListener)
-        : BaseAdapter() {
+    private inner class TasksAdapter(tasks: List<Task>, itemListener: TaskItemListener)
+        : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         var tasks: List<Task> = tasks
             set(tasks) {
@@ -246,39 +256,18 @@ class TasksFragment : Fragment(), TasksContract.View {
                 notifyDataSetChanged()
             }
 
-        override fun getCount() = tasks.size
+        val delegates = AdapterDelegatesManager<List<Task>>()
 
-        override fun getItem(i: Int) = tasks[i]
+        init {
 
-        override fun getItemId(i: Int) = i.toLong()
-
-        override fun getView(i: Int, view: View?, viewGroup: ViewGroup): View {
-            val task = getItem(i)
-            val rowView = view ?: LayoutInflater.from(viewGroup.context)
-                    .inflate(R.layout.task_item, viewGroup, false)
-
-            with(rowView.findViewById<TextView>(R.id.title)) {
-                text = task.getTitleForList()
-            }
-
-            with(rowView.findViewById<CheckBox>(R.id.complete)) {
-                // Active/completed task UI
-                isChecked = task.completed
-                val rowViewBackground =
-                        if (task.completed) R.drawable.list_completed_touch_feedback
-                        else R.drawable.touch_feedback
-                rowView.setBackgroundResource(rowViewBackground)
-                setOnClickListener {
-                    if (!task.completed) {
-                        itemListener.onCompleteTaskClick(task)
-                    } else {
-                        itemListener.onActivateTaskClick(task)
-                    }
-                }
-            }
-            rowView.setOnClickListener { itemListener.onTaskClick(task) }
-            return rowView
+            delegates.addDelegate(TasksAdapterDelegate(activity!!, ArrayList(0), itemListener))
         }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = delegates.onCreateViewHolder(parent, viewType)
+
+        override fun getItemCount(): Int = tasks.size
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = delegates.onBindViewHolder(tasks, position, holder)
     }
 
     interface TaskItemListener {
